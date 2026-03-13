@@ -1,0 +1,150 @@
+#Class MataKulia
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package uts.pemdas;
+
+public class MataKulia {
+   private final String nama;
+   private final int sks;
+   private final String nilaiHuruf;
+   
+   public MataKulia(String nama, int sks ,String nilaiHuruf) {
+       this.nama = nama;
+       this.sks = sks;
+       this.nilaiHuruf = nilaiHuruf.toUpperCase();
+   }
+   
+   public String getName() {
+       return nama;
+    }
+   
+   public int getSks() {
+       return sks;
+   }
+   
+   public double getBobot() {
+       return switch (nilaiHuruf) {
+           case "A" -> 4.0;
+           case "-A" -> 3.7;
+           case "B+" -> 3.3;
+           case "B" -> 3.0;
+           case "C+" -> 2.7;
+           case "C" -> 2.0;
+           case "D" -> 1.0;
+           case "E" -> 0.0;
+           default -> 0.0;
+       };
+   }
+   
+   public double getNilaiMutu(){
+       return getBobot()* sks;
+   }
+}
+
+#Class IPSTR
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package uts.pemdas;
+
+import java.util.ArrayList;
+public class IPSTR {
+    private final ArrayList<MataKulia> daftarMK;
+    public IPSTR() {
+        daftarMK = new ArrayList<>();
+    }
+    public void tambahMataKuliaH(MataKulia mk) {
+        daftarMK.add(mk);
+    }
+    public double hitungIPSTR() {
+        double totalNilaiMutu = 0;
+        int totalSKS = 0;
+        
+        for (MataKulia mk : daftarMK) {
+            totalNilaiMutu += mk.getNilaiMutu();
+            totalSKS += mk.getSks();
+        }
+        
+        if (totalSKS == 0) {
+            return 0;
+        }
+        return totalNilaiMutu / totalSKS;
+    }    
+        
+    public void tampilkanIPS() {
+    double totalNilaiMutu = 0;
+    int totalSKS = 0;
+
+    for (MataKulia mk : daftarMK) {
+        totalNilaiMutu += mk.getNilaiMutu();
+        totalSKS += mk.getSks();
+    }
+
+    double ips = totalNilaiMutu / totalSKS;
+
+    System.out.println("--------------------------------");
+    System.out.println("IPS Anda = " + ips);
+    }
+}
+
+#Class utama Main
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package uts.pemdas;
+
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        try (Scanner input = new Scanner(System.in)) {
+            System.out.println("========================================");
+            System.out.println("Program Penghitung Indeks Prestasi Semester");
+            System.out.println("========================================");
+            int totalMK = 0;
+            boolean valid = false;
+            while (!valid) {
+                try {
+                    System.out.print("Masukkan total mata kuliah yang diambil: ");
+                    totalMK = Integer.parseInt(input.nextLine());
+                    if (totalMK > 0) {
+                        valid = true;
+                    } else {
+                        System.out.println("Jumlah mata kuliah harus positif.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Input harus berupa angka.");
+                }
+            }
+            IPSTR ipsCalculator = new IPSTR();
+            for (int i = 1; i <= totalMK; i++) {
+                System.out.println("\nData Mata Kuliah ke-" + i);
+                System.out.print("Nama mata kuliah: ");
+                String nama = input.nextLine();
+                int sks = 0;
+                valid = false;
+                while (!valid) {
+                    try {
+                        System.out.print("Jumlah SKS: ");
+                        sks = Integer.parseInt(input.nextLine());
+                        if (sks > 0) {
+                            valid = true;
+                        } else {
+                            System.out.println("SKS harus positif.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Input harus angka.");
+                    }
+                }
+                System.out.print("Nilai huruf (A, A-, B+, B, B-, C+, C, D, E): ");
+                String nilaiHuruf = input.nextLine().trim().toUpperCase();
+                MataKulia mk = new MataKulia(nama, sks, nilaiHuruf);
+                ipsCalculator.tambahMataKuliaH(mk);
+            }
+            ipsCalculator.tampilkanIPS();
+        }
+    }
+}
